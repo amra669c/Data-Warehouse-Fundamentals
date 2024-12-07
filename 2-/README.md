@@ -1,4 +1,5 @@
-
+# This project is inspired by coursework from IBM Business Intelligence (BI) Analyst Professional Certificate. 
+---
 
 # **📊 Sales Data Warehouse Project**
 
@@ -165,7 +166,4 @@ GROUP BY product_name;
 - Optimize performance with indexing and partitioning.
 
 ---
-
-## **📜 License**
-This project is licensed under the MIT License.
 
