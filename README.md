@@ -10,6 +10,7 @@ The purpose of this repository is to document and share my learning journey in d
 
 ---
 
-## **Disclaimer:** The work presented here is for educational purposes, based on my own understanding and application of the concepts taught in the course. This is not an official solution to any course assignments or exams.
+## **Disclaimer:** 
+The work presented here is for educational purposes, based on my own understanding and application of the concepts taught in the course. This is not an official solution to any course assignments or exams.
 
 ---
