@@ -1,3 +1,6 @@
+# This project is inspired by coursework from IBM Business Intelligence (BI) Analyst Professional Certificate
+---
+
 # **Advanced SQL Aggregation and Materialized View Lab 🚀**
 
 This project demonstrates the use of advanced SQL aggregation techniques, such as **GROUPING SETS**, **ROLLUP**, and **CUBE**, to generate subtotals, grand totals, and multidimensional aggregates in a data warehouse environment. Additionally, it includes creating a **Materialized View** for optimized query performance.
@@ -105,9 +108,6 @@ GROUP BY GROUPING SETS (year, quartername);
 - **Materialized View**: Store aggregated data by country and year for fast reporting.
 
 ---
-
-## **📜 License**
-This project is licensed under the MIT License.
 
 ---
 
