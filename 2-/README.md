@@ -169,6 +169,3 @@ GROUP BY product_name;
 ## **📜 License**
 This project is licensed under the MIT License.
 
----
-
-You can copy this directly into your `README.md` file for GitHub! Let me know if you need further customization.
