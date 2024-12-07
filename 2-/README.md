@@ -11,7 +11,7 @@ This project demonstrates the implementation of a **Data Warehouse** to analyze 
 1. **📂 Table Creation**:
    - Schema includes fact and dimension tables.
    - Structured relationships enable efficient querying and analysis.
-2. **🔍 Advanced SQL Commands**:
+2. **🔍 SQL Commands**:
    - Use of **GROUPING SETS**, **ROLLUP**, and **CUBE** for flexible aggregations.
 3. **🚀 Materialized Views**:
    - Precomputing and storing complex query results to optimize analytics.
