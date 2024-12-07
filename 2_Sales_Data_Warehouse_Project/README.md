@@ -1,174 +1,110 @@
+# This project is inspired by coursework from IBM Business Intelligence (BI) Analyst Professional Certificate
+---
 
+# **Advanced SQL Aggregation and Materialized View Lab 🚀**
 
-**📊 Sales Data Warehouse Project**
-
-## **Overview**
-This project demonstrates the implementation of a **Data Warehouse** to analyze and report sales performance for a consumer electronics retail company. The goal is to build a structured data model using dimension and fact tables, implement advanced SQL commands for aggregations and rollups, and utilize materialized views for optimizing query performance. 🛠️
+This project demonstrates the use of advanced SQL aggregation techniques, such as **GROUPING SETS**, **ROLLUP**, and **CUBE**, to generate subtotals, grand totals, and multidimensional aggregates in a data warehouse environment. Additionally, it includes creating a **Materialized View** for optimized query performance.
 
 ---
 
-## **✨ Project Features**
-1. **📂 Table Creation**:
-   - Schema includes fact and dimension tables.
-   - Structured relationships enable efficient querying and analysis.
-2. **🔍 Advanced SQL Commands**:
-   - Use of **GROUPING SETS**, **ROLLUP**, and **CUBE** for flexible aggregations.
-3. **🚀 Materialized Views**:
-   - Precomputing and storing complex query results to optimize analytics.
+## **📂 Contents**
+- **Overview of Aggregation Techniques:**
+  - GROUPING SETS
+  - ROLLUP
+  - CUBE
+- **SQL Examples:**
+  - Aggregating data using different operators.
+  - Creating and querying materialized views.
 
 ---
 
-## **🗂️ Database Schema**
-
-### **Tables**
-1. **FactSales**: Stores transactional sales data.
-2. **MyDimCustomer**: Contains customer information.
-3. **MyDimProduct**: Contains product information.
-4. **MyDimDate**: Stores date details for time-based analysis.
+## 🎯 **Purpose**
+The goal of this lab is to explore and understand how **GROUPING SETS**, **ROLLUP**, and **CUBE** work in SQL to generate flexible aggregations. These operators allow for customized grouping and subtotaling of data in various ways, making them essential for advanced analytics. The lab also demonstrates the creation and use of **Materialized Views** to store precomputed query results, enabling faster and more efficient data retrieval.
 
 ---
 
 ## **💻 SQL Implementation**
 
-### **1. Creating Tables**
-The following tables are created to support sales data analysis:
+### **1. Using GROUPING SETS**
+GROUPING SETS allows grouping data in multiple ways within a single query.
 
-#### **FactSales Table**
 ```sql
-CREATE TABLE FactSales (
-    sales_id INT PRIMARY KEY,
-    quantity_sold INT,
-    price_per_unit DECIMAL(10, 2),
-    customer_id INT,
-    date_id INT
-);
-```
-
-#### **MyDimCustomer Table**
-```sql
-CREATE TABLE MyDimCustomer (
-    customer_id INT PRIMARY KEY,
-    customer_name VARCHAR(255)
-);
-```
-
-#### **MyDimProduct Table**
-```sql
-CREATE TABLE MyDimProduct (
-    product_id INT PRIMARY KEY,
-    product_name VARCHAR(255)
-);
-```
-
-#### **MyDimDate Table**
-```sql
-CREATE TABLE MyDimDate (
-    date_id INT PRIMARY KEY,
-    year INT,
-    month INT,
-    month_name VARCHAR(20),
-    day INT,
-    week_day INT,
-    week_day_name VARCHAR(20)
-);
+SELECT year, category, SUM(billedamount) AS totalbilledamount
+FROM "FactBilling"
+LEFT JOIN "DimCustomer" ON "FactBilling".customerid = "DimCustomer".customerid
+LEFT JOIN "DimMonth" ON "FactBilling".monthid = "DimMonth".monthid
+GROUP BY GROUPING SETS (year, category);
 ```
 
 ---
 
-### **2. Advanced Aggregations**
+### **2. Using ROLLUP**
+ROLLUP creates hierarchical subtotals and grand totals based on the provided columns.
 
-#### **Using GROUPING SETS** 🔄
-Generates custom combinations of aggregated results:
 ```sql
-SELECT year, month, product_id, SUM(quantity_sold) AS total_quantity
-FROM FactSales
-GROUP BY GROUPING SETS ((year, month, product_id), (year, month), (year), ());
-```
-- Provides totals at multiple levels (e.g., year + month, year only, or grand total).
-
-#### **Using ROLLUP** 📊
-Generates hierarchical aggregations:
-```sql
-SELECT year, month, SUM(quantity_sold) AS total_quantity
-FROM FactSales
-GROUP BY ROLLUP (year, month);
-```
-- Produces subtotals for each year and a grand total.
-
-#### **Using CUBE** 📈
-Generates all possible combinations of grouping:
-```sql
-SELECT year, month, product_id, SUM(quantity_sold) AS total_quantity
-FROM FactSales
-GROUP BY CUBE (year, month, product_id);
-```
-- Useful for generating multidimensional reports.
-
----
-
-### **3. Materialized View** 💾
-
-#### **Creating a Materialized View**
-Precomputes and stores the maximum sales for each product in each city:
-```sql
-CREATE MATERIALIZED VIEW max_sales AS
-SELECT
-    cs.city,
-    p.product_id,
-    p.product_name,
-    MAX(f.price_per_unit * f.quantity_sold) AS max_sales
-FROM
-    FactSales f
-JOIN
-    MyDimProduct p ON f.product_id = p.product_id
-JOIN
-    MyDimCustomer cs ON f.customer_id = cs.customer_id
-GROUP BY
-    cs.city,
-    p.product_id,
-    p.product_name
-WITH DATA;
-```
-
-#### **Refreshing the Materialized View** 🔄
-If the source tables are updated, refresh the view to maintain accuracy:
-```sql
-REFRESH MATERIALIZED VIEW max_sales;
+SELECT year, category, SUM(billedamount) AS totalbilledamount
+FROM "FactBilling"
+LEFT JOIN "DimCustomer" ON "FactBilling".customerid = "DimCustomer".customerid
+LEFT JOIN "DimMonth" ON "FactBilling".monthid = "DimMonth".monthid
+GROUP BY ROLLUP (year, category)
+ORDER BY year, category;
 ```
 
 ---
 
-## **📊 Example Reports**
+### **3. Using CUBE**
+CUBE produces subtotals and grand totals for all possible combinations of the specified columns.
 
-### **1. Total Sales Revenue Per Year Per City**
 ```sql
-SELECT year, city, SUM(price_per_unit * quantity_sold) AS total_revenue
-FROM FactSales
-JOIN MyDimCustomer ON FactSales.customer_id = MyDimCustomer.customer_id
-JOIN MyDimDate ON FactSales.date_id = MyDimDate.date_id
-GROUP BY year, city;
-```
-
-### **2. Product Sales Insights**
-```sql
-SELECT product_name, SUM(quantity_sold) AS total_quantity
-FROM FactSales
-JOIN MyDimProduct ON FactSales.product_id = MyDimProduct.product_id
-GROUP BY product_name;
+SELECT year, category, SUM(billedamount) AS totalbilledamount
+FROM "FactBilling"
+LEFT JOIN "DimCustomer" ON "FactBilling".customerid = "DimCustomer".customerid
+LEFT JOIN "DimMonth" ON "FactBilling".monthid = "DimMonth".monthid
+GROUP BY CUBE (year, category)
+ORDER BY year, category;
 ```
 
 ---
 
-## **🚀 Future Enhancements**
-- Add more dimensions (e.g., regions, stores) for deeper analysis.
-- Implement more materialized views for precomputed insights.
-- Optimize performance with indexing and partitioning.
+### **4. Creating a Materialized View**
+A materialized view stores the results of a query for efficient data retrieval.
+
+```sql
+CREATE MATERIALIZED VIEW countrystats (country, year, totalbilledamount) AS
+SELECT country, year, SUM(billedamount)
+FROM "FactBilling"
+LEFT JOIN "DimCustomer" ON "FactBilling".customerid = "DimCustomer".customerid
+LEFT JOIN "DimMonth" ON "FactBilling".monthid = "DimMonth".monthid
+GROUP BY country, year;
+```
 
 ---
 
-## **📜 License**
-This project is licensed under the MIT License.
+### **5. Grouping Sets for Quarter Analysis**
+This query groups data by year and quarter name using GROUPING SETS.
+
+```sql
+SELECT year, quartername, SUM(billedamount) AS totalbilledamount
+FROM "FactBilling"
+LEFT JOIN "DimCustomer" ON "FactBilling".customerid = "DimCustomer".customerid
+LEFT JOIN "DimMonth" ON "FactBilling".monthid = "DimMonth".monthid
+GROUP BY GROUPING SETS (year, quartername);
+```
 
 ---
 
-You can copy this directly into your `README.md` file for GitHub! Let me know if you need further customization.
+## **✨ Highlights**
+- **GROUPING SETS**: Custom grouping combinations.
+- **ROLLUP**: Hierarchical totals.
+- **CUBE**: Multidimensional aggregations.
+- **Materialized View**: Stores precomputed results for optimized performance.
+
+---
+
+## **📊 Usage Scenarios**
+- **GROUPING SETS**: Analyze yearly and category-wise sales data in one query.
+- **ROLLUP**: Generate hierarchical reports with subtotals and grand totals.
+- **CUBE**: Perform multidimensional analysis of sales data.
+- **Materialized View**: Store aggregated data by country and year for fast reporting.
+
+---
